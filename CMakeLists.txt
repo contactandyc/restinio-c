@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2025 Andy Curtis <contactandyc@gmail.com>
+# SPDX-FileCopyrightText: 2024-2026 Andy Curtis <contactandyc@gmail.com>
 # SPDX-FileCopyrightText: 2024–2025 Knode.ai — technical questions: contact Andy (above)
 # SPDX-License-Identifier: Apache-2.0
 
@@ -44,11 +44,13 @@ endif()
 
 include(GNUInstallDirs)
 
-# ---- Dependencies ----
+# ---- Dependencies (Standard CMake) ----
 find_package(restinio REQUIRED)
 find_package(fmt REQUIRED)
 find_package(expected-lite CONFIG REQUIRED)
 find_package(asio REQUIRED)
+
+# ---- Dependencies (PkgConfig Shims) ----
 
 # ── Library variants (ALL are defined & built/installed) ──────────────────────
 add_library(restinio_c_debug  src/handlers/restinio_path.c)

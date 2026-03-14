@@ -27,7 +27,7 @@ sudo cmake --install .
 ### Development tooling (optional)
 
 ```bash
-sudo apt-get update && sudo apt-get install -y valgrind gdb python3 python3-venv python3-pip perl autoconf automake libtool
+sudo apt-get update && sudo apt-get install -y valgrind gdb perl autoconf automake libtool python3 python3-venv python3-pip
 ```
 
 
@@ -38,16 +38,11 @@ Clone & build:
 
 ```bash
 git clone --depth 1 --branch asio-1-30-2 --single-branch "https://github.com/chriskohlhoff/asio.git" "asio"
-cd asio/asio
-./autogen.sh
-cd ../../
-mkdir -p build/asio
-cd build/asio
+cd asio/asio && ./autogen.sh && cd ../../
+mkdir -p build/asio && cd build/asio
 ../../asio/asio/configure --prefix=/usr/local
-make -j"$(nproc)"
-sudo make install
-cd ../..
-rm -rf asio
+make -j"$(nproc)" && sudo make install
+cd ../.. && rm -rf asio
 ```
 
 
@@ -57,13 +52,10 @@ Clone & build:
 
 ```bash
 git clone --depth 1 "https://github.com/contactandyc/restinio.git" "restinio"
-mkdir -p build/expected-lite
-cd build/expected-lite
+mkdir -p build/expected-lite && cd build/expected-lite
 cmake ../../restinio/expected-lite
-make -j"$(nproc)"
-sudo make install
-cd ../..
-rm -rf restinio
+make -j"$(nproc)" && sudo make install
+cd ../.. && rm -rf restinio
 ```
 
 
@@ -73,13 +65,10 @@ Clone & build:
 
 ```bash
 git clone --depth 1 "https://github.com/contactandyc/restinio.git" "restinio"
-mkdir -p build/fmt
-cd build/fmt
+mkdir -p build/fmt && cd build/fmt
 cmake ../../restinio/fmt
-make -j"$(nproc)"
-sudo make install
-cd ../..
-rm -rf restinio
+make -j"$(nproc)" && sudo make install
+cd ../.. && rm -rf restinio
 ```
 
 
@@ -89,13 +78,10 @@ Clone & build:
 
 ```bash
 git clone --depth 1 --branch v.0.7.3-fork --single-branch "https://github.com/contactandyc/restinio.git" "restinio"
-mkdir -p build/restinio
-cd build/restinio
+mkdir -p build/restinio && cd build/restinio
 cmake ../../restinio/dev -DRESTINIO_SAMPLE=OFF -DRESTINIO_TEST=OFF -DRESTINIO_DEP_FMT=system -DRESTINIO_DEP_EXPECTED_LITE=system
-make -j"$(nproc)"
-sudo make install
-cd ../..
-rm -rf restinio
+make -j"$(nproc)" && sudo make install
+cd ../.. && rm -rf restinio
 ```
 
 
@@ -131,13 +117,13 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get update && apt-get install -y \
     valgrind \
     gdb \
-    python3 \
-    python3-venv \
-    python3-pip \
     perl \
     autoconf \
     automake \
     libtool \
+    python3 \
+    python3-venv \
+    python3-pip \
  && rm -rf /var/lib/apt/lists/*
 
 # --- Install CMake from official binaries (arch-aware) ------------------------
@@ -168,49 +154,35 @@ ENV PATH="/opt/venv/bin:${PATH}"
 # --- Build & install asio ---
 RUN set -eux; \
   git clone --depth 1 --branch asio-1-30-2 --single-branch "https://github.com/chriskohlhoff/asio.git" "asio" && \
-  cd asio/asio && \
-  ./autogen.sh && \
-  cd ../../ && \
-  mkdir -p build/asio && \
-  cd build/asio && \
+  cd asio/asio && ./autogen.sh && cd ../../ && \
+  mkdir -p build/asio && cd build/asio && \
   ../../asio/asio/configure --prefix=/usr/local && \
-  make -j"$(nproc)" && \
-  sudo make install && \
-  cd ../.. && \
-  rm -rf asio
+  make -j"$(nproc)" && sudo make install && \
+  cd ../.. && rm -rf asio
 
 # --- Build & install expected-lite ---
 RUN set -eux; \
   git clone --depth 1 "https://github.com/contactandyc/restinio.git" "restinio" && \
-  mkdir -p build/expected-lite && \
-  cd build/expected-lite && \
+  mkdir -p build/expected-lite && cd build/expected-lite && \
   cmake ../../restinio/expected-lite && \
-  make -j"$(nproc)" && \
-  sudo make install && \
-  cd ../.. && \
-  rm -rf restinio
+  make -j"$(nproc)" && sudo make install && \
+  cd ../.. && rm -rf restinio
 
 # --- Build & install fmt ---
 RUN set -eux; \
   git clone --depth 1 "https://github.com/contactandyc/restinio.git" "restinio" && \
-  mkdir -p build/fmt && \
-  cd build/fmt && \
+  mkdir -p build/fmt && cd build/fmt && \
   cmake ../../restinio/fmt && \
-  make -j"$(nproc)" && \
-  sudo make install && \
-  cd ../.. && \
-  rm -rf restinio
+  make -j"$(nproc)" && sudo make install && \
+  cd ../.. && rm -rf restinio
 
 # --- Build & install restinio ---
 RUN set -eux; \
   git clone --depth 1 --branch v.0.7.3-fork --single-branch "https://github.com/contactandyc/restinio.git" "restinio" && \
-  mkdir -p build/restinio && \
-  cd build/restinio && \
+  mkdir -p build/restinio && cd build/restinio && \
   cmake ../../restinio/dev -DRESTINIO_SAMPLE=OFF -DRESTINIO_TEST=OFF -DRESTINIO_DEP_FMT=system -DRESTINIO_DEP_EXPECTED_LITE=system && \
-  make -j"$(nproc)" && \
-  sudo make install && \
-  cd ../.. && \
-  rm -rf restinio
+  make -j"$(nproc)" && sudo make install && \
+  cd ../.. && rm -rf restinio
 
 
 # --- Build & install this project --------------------------------------------
