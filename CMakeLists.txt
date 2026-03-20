@@ -59,8 +59,11 @@ if(NOT TARGET asio)
   add_library(asio ALIAS PkgConfig::PC_ASIO)
 endif()
 
+
 # ── Library variants (ALL are defined & built/installed) ──────────────────────
-add_library(restinio_c_debug  src/handlers/restinio_path.c)
+
+add_library(restinio_c_debug STATIC
+  src/handlers/restinio_path.c)
 
 target_include_directories(restinio_c_debug PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -94,7 +97,9 @@ install(TARGETS restinio_c_debug EXPORT restinio_cTargets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-add_library(restinio_c_memory  src/handlers/restinio_path.c)
+
+add_library(restinio_c_memory STATIC
+  src/handlers/restinio_path.c)
 
 target_include_directories(restinio_c_memory PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -131,7 +136,9 @@ install(TARGETS restinio_c_memory EXPORT restinio_cTargets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-add_library(restinio_c_static  src/handlers/restinio_path.c)
+
+add_library(restinio_c_static STATIC
+  src/handlers/restinio_path.c)
 
 target_include_directories(restinio_c_static PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -165,7 +172,9 @@ install(TARGETS restinio_c_static EXPORT restinio_cTargets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-add_library(restinio_c_shared  src/handlers/restinio_path.c)
+
+add_library(restinio_c_shared SHARED
+  src/handlers/restinio_path.c)
 
 target_include_directories(restinio_c_shared PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
