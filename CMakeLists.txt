@@ -48,9 +48,16 @@ include(GNUInstallDirs)
 find_package(restinio REQUIRED)
 find_package(fmt REQUIRED)
 find_package(expected-lite CONFIG REQUIRED)
-find_package(asio REQUIRED)
 
 # ---- Dependencies (PkgConfig Shims) ----
+find_package(PkgConfig REQUIRED)
+# Use IMPORTED_TARGET to automatically create PkgConfig::PC_ASIO
+pkg_check_modules(PC_ASIO REQUIRED IMPORTED_TARGET asio)
+
+# Alias 'asio' to the robust PkgConfig target
+if(NOT TARGET asio)
+  add_library(asio ALIAS PkgConfig::PC_ASIO)
+endif()
 
 # ── Library variants (ALL are defined & built/installed) ──────────────────────
 add_library(restinio_c_debug  src/handlers/restinio_path.c)
@@ -74,7 +81,7 @@ if("CXX" IN_LIST CMAKE_PROJECT_LANGUAGES)
 endif()
 
 # Link deps once
-target_link_libraries(restinio_c_debug PUBLIC  restinio::restinio  fmt::fmt  nonstd::expected-lite  asio::asio)
+target_link_libraries(restinio_c_debug PUBLIC  restinio::restinio  fmt::fmt  nonstd::expected-lite  asio)
 
 # Per-variant optimization flavor
 target_compile_options(restinio_c_debug PRIVATE ${_A_DEBUG_OPTS})
@@ -108,7 +115,7 @@ if("CXX" IN_LIST CMAKE_PROJECT_LANGUAGES)
 endif()
 
 # Link deps once
-target_link_libraries(restinio_c_memory PUBLIC  restinio::restinio  fmt::fmt  nonstd::expected-lite  asio::asio)
+target_link_libraries(restinio_c_memory PUBLIC  restinio::restinio  fmt::fmt  nonstd::expected-lite  asio)
 
 # Per-variant optimization flavor
 target_compile_options(restinio_c_memory PRIVATE ${_A_DEBUG_OPTS})
@@ -145,7 +152,7 @@ if("CXX" IN_LIST CMAKE_PROJECT_LANGUAGES)
 endif()
 
 # Link deps once
-target_link_libraries(restinio_c_static PUBLIC  restinio::restinio  fmt::fmt  nonstd::expected-lite  asio::asio)
+target_link_libraries(restinio_c_static PUBLIC  restinio::restinio  fmt::fmt  nonstd::expected-lite  asio)
 
 # Per-variant optimization flavor
 target_compile_options(restinio_c_static PRIVATE ${_A_RELEASE_OPTS})
@@ -179,7 +186,7 @@ if("CXX" IN_LIST CMAKE_PROJECT_LANGUAGES)
 endif()
 
 # Link deps once
-target_link_libraries(restinio_c_shared PUBLIC  restinio::restinio  fmt::fmt  nonstd::expected-lite  asio::asio)
+target_link_libraries(restinio_c_shared PUBLIC  restinio::restinio  fmt::fmt  nonstd::expected-lite  asio)
 
 # Per-variant optimization flavor
 target_compile_options(restinio_c_shared PRIVATE ${_A_RELEASE_OPTS})
@@ -245,7 +252,7 @@ endif()
 
 set(A_BUILD_TARGET_BASENAME "restinio_c")
 set(A_BUILD_EXPORT_NAMESPACE "restinio_c")
-set(A_BUILD_DEPS "restinio;fmt;expected-lite;asio")
+set(A_BUILD_DEPS "restinio;fmt;expected-lite")
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
