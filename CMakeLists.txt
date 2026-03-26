@@ -1,6 +1,8 @@
-# SPDX-FileCopyrightText: 2024-2026 Andy Curtis <contactandyc@gmail.com>
-# SPDX-FileCopyrightText: 2024–2025 Knode.ai — technical questions: contact Andy (above)
+# SPDX-FileCopyrightText: 2019–2026 Andy Curtis <contactandyc@gmail.com>
+# SPDX-FileCopyrightText: 2024–2025 Knode.ai
 # SPDX-License-Identifier: Apache-2.0
+#
+# Maintainer: Andy Curtis <contactandyc@gmail.com>
 
 # CMakeLists.txt for libraries (regular or header-only)
 cmake_minimum_required(VERSION 3.20)
@@ -63,7 +65,7 @@ endif()
 # ── Library variants (ALL are defined & built/installed) ──────────────────────
 
 add_library(restinio_c_debug STATIC
-  src/handlers/restinio_path.c)
+  src/handlers/restinio_path.c  src/restinio_c.cpp)
 
 target_include_directories(restinio_c_debug PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -99,7 +101,7 @@ install(TARGETS restinio_c_debug EXPORT restinio_cTargets
   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 add_library(restinio_c_memory STATIC
-  src/handlers/restinio_path.c)
+  src/handlers/restinio_path.c  src/restinio_c.cpp)
 
 target_include_directories(restinio_c_memory PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -138,7 +140,7 @@ install(TARGETS restinio_c_memory EXPORT restinio_cTargets
   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 add_library(restinio_c_static STATIC
-  src/handlers/restinio_path.c)
+  src/handlers/restinio_path.c  src/restinio_c.cpp)
 
 target_include_directories(restinio_c_static PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -174,7 +176,7 @@ install(TARGETS restinio_c_static EXPORT restinio_cTargets
   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 add_library(restinio_c_shared SHARED
-  src/handlers/restinio_path.c)
+  src/handlers/restinio_path.c  src/restinio_c.cpp)
 
 target_include_directories(restinio_c_shared PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
