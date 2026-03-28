@@ -17,11 +17,25 @@ option(A_ENABLE_COVERAGE "Enable code coverage instrumentation" OFF)
 
 find_library(M_LIB m)
 
-# ---- Test executables ----
-set(TEST_EXECUTABLES "")
-add_executable(test_restinio  src/test_restinio.c)
+find_package(restinio REQUIRED)
+find_package(fmt REQUIRED)
+find_package(expected-lite CONFIG REQUIRED)
 
-target_include_directories(test_restinio PRIVATE  ${CMAKE_CURRENT_SOURCE_DIR}/src)
+# Fallback for standalone test builds (when not included via add_subdirectory)
+if(NOT TARGET restinio_c::restinio_c)
+  find_package(restinio_c CONFIG REQUIRED)
+endif()
+
+set(TEST_EXECUTABLES "")
+
+# ---- Targets ----
+add_executable(test_restinio
+  src/test_restinio.c
+)
+
+target_include_directories(test_restinio PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/../src
+)
 
 list(APPEND TEST_EXECUTABLES test_restinio)
 
@@ -36,9 +50,10 @@ if("CXX" IN_LIST CMAKE_PROJECT_LANGUAGES)
   )
 endif()
 
-if(NOT TARGET restinio_c::restinio_c)
-  find_package(restinio_c CONFIG REQUIRED)
-endif()
+target_link_libraries(test_restinio PRIVATE restinio::restinio)
+target_link_libraries(test_restinio PRIVATE fmt::fmt)
+target_link_libraries(test_restinio PRIVATE nonstd::expected-lite)
+target_link_libraries(test_restinio PRIVATE asio)
 target_link_libraries(test_restinio PRIVATE restinio_c::restinio_c)
 
 if(M_LIB)
