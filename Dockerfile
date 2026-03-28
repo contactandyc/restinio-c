@@ -62,10 +62,10 @@ ENV PATH="/opt/venv/bin:${PATH}"
 RUN set -eux; \
     git clone --depth 1 --branch asio-1-30-2 --single-branch "https://github.com/chriskohlhoff/asio.git" "asio"; \
     cd "asio"; \
-    ./autogen.sh && \
-    ./configure --prefix=/usr/local && \
-    make -j"$(nproc)" && \
-    sudo make install
+    (cd asio && ./autogen.sh) && \
+    (cd asio && ./configure --prefix=/usr/local) && \
+    (cd asio && make -j"$(nproc)") && \
+    (cd asio && sudo make install)
 ; \
     cd ..; \
     rm -rf "asio"
