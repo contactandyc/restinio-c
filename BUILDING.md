@@ -1,7 +1,7 @@
 # BUILDING
 
 This project: **Restinio C Library**
-Version: **0.0.2**
+Version: **0.1.0**
 
 ## Local build
 
@@ -40,10 +40,10 @@ Clone & build:
 ```bash
 git clone --depth 1 --branch asio-1-30-2 --single-branch "https://github.com/chriskohlhoff/asio.git" "asio"
 cd "asio"
-./autogen.sh
-./configure --prefix=/usr/local
-make -j"$(nproc)"
-sudo make install
+(cd asio && ./autogen.sh)
+(cd asio && ./configure --prefix=/usr/local)
+(cd asio && make -j"$(nproc)")
+(cd asio && sudo make install)
 cd ..
 rm -rf "asio"
 ```
