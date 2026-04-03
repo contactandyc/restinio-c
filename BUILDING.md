@@ -1,7 +1,7 @@
 # BUILDING
 
 This project: **Restinio C Library**
-Version: **0.1.0**
+Version: **0.0.2**
 
 ## Local build
 
@@ -28,7 +28,7 @@ sudo cmake --install .
 ### Development tooling (optional)
 
 ```bash
-sudo apt-get update && sudo apt-get install -y valgrind gdb perl autoconf automake libtool
+sudo apt-get update && sudo apt-get install -y autoconf automake gdb libtool perl valgrind
 ```
 
 

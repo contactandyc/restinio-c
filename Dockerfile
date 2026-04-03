@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     wget \
+    abigail-tools \
     tar \
     unzip \
     zip \
@@ -25,12 +26,12 @@ RUN apt-get update && apt-get install -y \
 
 # Development tooling (optional)
 RUN apt-get update && apt-get install -y \
-    valgrind \
-    gdb \
-    perl \
     autoconf \
     automake \
+    gdb \
     libtool \
+    perl \
+    valgrind \
  && rm -rf /var/lib/apt/lists/*
 
 # --- Install CMake from official binaries (arch-aware) ------------------------
@@ -54,9 +55,6 @@ RUN useradd --create-home --shell /bin/bash dev && \
 USER dev
 WORKDIR /workspace
 
-# --- Optional Python venv for tools ------------------------------------------
-RUN python3 -m venv /opt/venv && /opt/venv/bin/pip install --upgrade pip
-ENV PATH="/opt/venv/bin:${PATH}"
 
 # --- Build & install asio ---
 RUN set -eux; \
@@ -65,44 +63,36 @@ RUN set -eux; \
     (cd asio && ./autogen.sh) && \
     (cd asio && ./configure --prefix=/usr/local) && \
     (cd asio && make -j"$(nproc)") && \
-    (cd asio && sudo make install)
-; \
+    (cd asio && sudo make install); \
     cd ..; \
     rm -rf "asio"
-
 # --- Build & install expected-lite ---
 RUN set -eux; \
     git clone --depth 1 --branch v.0.7.3-fork --single-branch "https://github.com/contactandyc/restinio.git" "expected-lite"; \
     cd "expected-lite"; \
     cmake -S expected-lite -B expected-lite/build -DCMAKE_INSTALL_PREFIX=/usr/local && \
     cmake --build expected-lite/build -j"$(nproc)" && \
-    sudo cmake --install expected-lite/build
-; \
+    sudo cmake --install expected-lite/build; \
     cd ..; \
     rm -rf "expected-lite"
-
 # --- Build & install fmt ---
 RUN set -eux; \
     git clone --depth 1 --branch v.0.7.3-fork --single-branch "https://github.com/contactandyc/restinio.git" "fmt"; \
     cd "fmt"; \
     cmake -S fmt -B fmt/build -DCMAKE_INSTALL_PREFIX=/usr/local && \
     cmake --build fmt/build -j"$(nproc)" && \
-    sudo cmake --install fmt/build
-; \
+    sudo cmake --install fmt/build; \
     cd ..; \
     rm -rf "fmt"
-
 # --- Build & install restinio ---
 RUN set -eux; \
     git clone --depth 1 --branch v.0.7.3-fork --single-branch "https://github.com/contactandyc/restinio.git" "restinio"; \
     cd "restinio"; \
     cmake -S dev -B dev/build -DCMAKE_INSTALL_PREFIX=/usr/local -DRESTINIO_SAMPLE=OFF -DRESTINIO_TEST=OFF -DRESTINIO_DEP_FMT=system -DRESTINIO_DEP_EXPECTED_LITE=system && \
     cmake --build dev/build -j"$(nproc)" && \
-    sudo cmake --install dev/build
-; \
+    sudo cmake --install dev/build; \
     cd ..; \
     rm -rf "restinio"
-
 
 # --- Build & install this project --------------------------------------------
 COPY --chown=dev:dev . /workspace/restinio-c
