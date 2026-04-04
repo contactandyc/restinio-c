@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(restinio_c
   VERSION 0.1.1
-  LANGUAGES C
+  LANGUAGES C CXX
 )
 # ── Variant selection for the umbrella alias ──────────────────────────────────
 set(A_BUILD_VARIANT "debug" CACHE STRING
@@ -68,15 +68,10 @@ target_include_directories(restinio_c_debug PUBLIC
 set_target_properties(restinio_c_debug PROPERTIES
   C_STANDARD 23
   C_STANDARD_REQUIRED YES
+  CXX_STANDARD 17
+  CXX_STANDARD_REQUIRED YES
   POSITION_INDEPENDENT_CODE ON
 )
-
-if("CXX" IN_LIST CMAKE_PROJECT_LANGUAGES)
-  set_target_properties(restinio_c_debug PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED YES
-  )
-endif()
 
 target_link_libraries(restinio_c_debug PUBLIC
   restinio::restinio
@@ -106,15 +101,10 @@ target_include_directories(restinio_c_memory PUBLIC
 set_target_properties(restinio_c_memory PROPERTIES
   C_STANDARD 23
   C_STANDARD_REQUIRED YES
+  CXX_STANDARD 17
+  CXX_STANDARD_REQUIRED YES
   POSITION_INDEPENDENT_CODE ON
 )
-
-if("CXX" IN_LIST CMAKE_PROJECT_LANGUAGES)
-  set_target_properties(restinio_c_memory PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED YES
-  )
-endif()
 
 target_link_libraries(restinio_c_memory PUBLIC
   restinio::restinio
@@ -147,15 +137,10 @@ target_include_directories(restinio_c_static PUBLIC
 set_target_properties(restinio_c_static PROPERTIES
   C_STANDARD 23
   C_STANDARD_REQUIRED YES
+  CXX_STANDARD 17
+  CXX_STANDARD_REQUIRED YES
   POSITION_INDEPENDENT_CODE ON
 )
-
-if("CXX" IN_LIST CMAKE_PROJECT_LANGUAGES)
-  set_target_properties(restinio_c_static PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED YES
-  )
-endif()
 
 target_link_libraries(restinio_c_static PUBLIC
   restinio::restinio
@@ -185,15 +170,10 @@ target_include_directories(restinio_c_shared PUBLIC
 set_target_properties(restinio_c_shared PROPERTIES
   C_STANDARD 23
   C_STANDARD_REQUIRED YES
+  CXX_STANDARD 17
+  CXX_STANDARD_REQUIRED YES
   POSITION_INDEPENDENT_CODE ON
 )
-
-if("CXX" IN_LIST CMAKE_PROJECT_LANGUAGES)
-  set_target_properties(restinio_c_shared PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED YES
-  )
-endif()
 
 target_link_libraries(restinio_c_shared PUBLIC
   restinio::restinio
@@ -231,6 +211,13 @@ set(_CFG_IN "${CMAKE_CURRENT_BINARY_DIR}/config.cmake.in")
 file(WRITE "${_CFG_IN}" [=[
 @PACKAGE_INIT@
 include(CMakeFindDependencyMacro)
+
+# Re-resolve PkgConfig dependencies for consumers
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(PC_ASIO REQUIRED IMPORTED_TARGET asio)
+if(NOT TARGET asio)
+  add_library(asio ALIAS PkgConfig::PC_ASIO)
+endif()
 
 if(NOT DEFINED A_BUILD_VARIANT OR A_BUILD_VARIANT STREQUAL "")
   set(A_BUILD_VARIANT "debug")

@@ -5,7 +5,16 @@
 // Maintainer: Andy Curtis <contactandyc@gmail.com>
 
 #include "restinio-c/restinio_c.h"
+
+// Explicitly include C++17 headers that Restinio needs on macOS/Clang
+#include <optional>
+#include <variant>
+#include <filesystem>
+#include <new>
+#include <string_view>
+
 #include <restinio/all.hpp>  // for restinio::run, on_thread_pool, create_response, etc.
+
 #include <thread>
 #include <memory>
 #include <atomic>
@@ -17,7 +26,7 @@
 #include <unordered_map>
 
 
-// Anonymous namespace
+// Anonymous namespace for internal C++ state and helpers
 namespace {
 
 typedef struct restinio_path_handler_s {
@@ -43,19 +52,17 @@ static restinio_options_t g_options;
 
 /**
  * 1) Instead of a single signature that takes a `response_builder_t<default_traits_t> &`,
- *    we make apply_headers_from_user a template, so it can accept *any* of the modern
- *    `response_builder_t<Traits>` types that Restinio might produce.
+ * we make apply_headers_from_user a template, so it can accept *any* of the modern
+ * `response_builder_t<Traits>` types that Restinio might produce.
  *
  * 2) We replace `rb.append_header(...)` with `rb.header().set_field(...)`, which is
- *    the typical modern approach in new versions of Restinio.
+ * the typical modern approach in new versions of Restinio.
  */
 template<typename Builder>
 void apply_headers_from_user(Builder &rb, restinio_header_t *hdr_list)
 {
     for (auto *hdr = hdr_list; hdr != nullptr; hdr = hdr->next) {
         if (hdr->key && hdr->value) {
-            // Old code: rb.append_header(hdr->key, hdr->value);
-            // Modern code:
             rb.header().set_field(hdr->key, hdr->value);
         }
     }
@@ -123,8 +130,8 @@ auto make_request_handler() {
                 rb.set_body(user_resp->response ? user_resp->response : "");
 
                 if (user_resp->destroy) {
-                    restinio_destroy_cb destroy_cb = user_resp->destroy;
-                    destroy_cb(user_resp);
+                    // FIX: Call the function pointer directly
+                    user_resp->destroy(user_resp);
                 }
                 return rb.done();
             }
@@ -174,11 +181,48 @@ static void run_server_loop(const restinio_options_t &options) {
     server_handle->wait();
 }
 
+static void _restinio_use(const char *method,
+                          const char *path,
+                          restinio_handle_request_cb cb,
+                          restinio_handle_detached_request_cb detached_cb,
+                          void *arg) {
+    size_t path_length = path ? strlen(path) : 0;
+    size_t method_length = method ? strlen(method) : 0;
+
+    restinio_path_handler_t *handler =
+        (restinio_path_handler_t *)calloc(1, sizeof(*handler) + method_length + path_length + 2);
+    handler->method = (char *)(handler + 1);
+    if(method_length) {
+        strcpy(handler->method, method);
+        // uppercase handler->method
+        for (char *c = handler->method; *c; c++) {
+            *c = toupper(*c);
+        }
+    } else
+        handler->method[0] = 0;
+    handler->path = handler->method + method_length + 1;
+    if(path_length)
+        strcpy(handler->path, path);
+    else
+        handler->path[0] = 0;
+
+    if(!g_path_map)
+        g_path_map = g_path_map_tail = handler;
+    else {
+        g_path_map_tail->next = handler;
+        g_path_map_tail = handler;
+    }
+    handler->detached_cb = detached_cb;
+    handler->cb = cb;
+    handler->arg = arg;
+}
+
 } // anonymous namespace
 
-#ifdef __cplusplus
+// ----------------------------------------------------------------------------
+// C API EXPORTS
+// ----------------------------------------------------------------------------
 extern "C" {
-#endif
 
 void restinio_finish_detached(
     void *response_handle,
@@ -254,42 +298,6 @@ void restinio_finish_detached_json(
     );
 }
 
-static void _restinio_use(const char *method,
-                          const char *path,
-                          restinio_handle_request_cb cb,
-                          restinio_handle_detached_request_cb detached_cb,
-                          void *arg) {
-    size_t path_length = path ? strlen(path) : 0;
-    size_t method_length = method ? strlen(method) : 0;
-
-    restinio_path_handler_t *handler =
-        (restinio_path_handler_t *)calloc(1, sizeof(*handler) + method_length + path_length + 2);
-    handler->method = (char *)(handler + 1);
-    if(method_length) {
-        strcpy(handler->method, method);
-        // uppercase handler->method
-        for (char *c = handler->method; *c; c++) {
-            *c = toupper(*c);
-        }
-    } else
-        handler->method[0] = 0;
-    handler->path = handler->method + method_length + 1;
-    if(path_length)
-        strcpy(handler->path, path);
-    else
-        handler->path[0] = 0;
-
-    if(!g_path_map)
-        g_path_map = g_path_map_tail = handler;
-    else {
-        g_path_map_tail->next = handler;
-        g_path_map_tail = handler;
-    }
-    handler->detached_cb = detached_cb;
-    handler->cb = cb;
-    handler->arg = arg;
-}
-
 void restinio_use(const char *method,
                   const char *path,
                   restinio_handle_request_cb cb,
@@ -353,6 +361,4 @@ void restinio_destroy()
     g_server.reset();
 }
 
-#ifdef __cplusplus
 } // extern "C"
-#endif

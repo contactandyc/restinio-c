@@ -7,7 +7,7 @@
 # CMakeLists.txt for tests
 cmake_minimum_required(VERSION 3.20)
 
-project(restinio_c_tests LANGUAGES C)
+project(restinio_c_tests LANGUAGES C CXX)
 
 set(A_BUILD_VARIANT "debug" CACHE STRING
     "Variant to link via restinio_c::restinio_c (debug|memory|static|shared)")
@@ -20,6 +20,7 @@ find_library(M_LIB m)
 find_package(restinio REQUIRED)
 find_package(fmt REQUIRED)
 find_package(expected-lite CONFIG REQUIRED)
+find_package(the_io_library CONFIG REQUIRED)
 
 # Fallback for standalone test builds (when not included via add_subdirectory)
 if(NOT TARGET restinio_c::restinio_c)
@@ -54,6 +55,7 @@ target_link_libraries(test_restinio PRIVATE restinio::restinio)
 target_link_libraries(test_restinio PRIVATE fmt::fmt)
 target_link_libraries(test_restinio PRIVATE nonstd::expected-lite)
 target_link_libraries(test_restinio PRIVATE asio)
+target_link_libraries(test_restinio PRIVATE the_io_library::the_io_library)
 target_link_libraries(test_restinio PRIVATE restinio_c::restinio_c)
 
 if(M_LIB)

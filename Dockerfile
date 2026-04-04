@@ -31,6 +31,9 @@ RUN apt-get update && apt-get install -y \
     gdb \
     libtool \
     perl \
+    python3 \
+    python3-pip \
+    python3-venv \
     valgrind \
  && rm -rf /var/lib/apt/lists/*
 
@@ -55,6 +58,11 @@ RUN useradd --create-home --shell /bin/bash dev && \
 USER dev
 WORKDIR /workspace
 
+# --- Optional Python venv for tools ------------------------------------------
+RUN sudo python3 -m venv /opt/venv && \
+    sudo chown -R dev:dev /opt/venv && \
+    /opt/venv/bin/pip install --upgrade pip
+ENV PATH="/opt/venv/bin:${PATH}"
 
 # --- Build & install asio ---
 RUN set -eux; \
@@ -93,6 +101,38 @@ RUN set -eux; \
     sudo cmake --install dev/build; \
     cd ..; \
     rm -rf "restinio"
+# --- Build & install the-macro-library ---
+RUN set -eux; \
+    git clone --depth 1 --single-branch "https://github.com/contactandyc/the-macro-library.git" "the-macro-library"; \
+    cd "the-macro-library"; \
+    ./build.sh clean && \
+    ./build.sh install; \
+    cd ..; \
+    rm -rf "the-macro-library"
+# --- Build & install a-memory-library ---
+RUN set -eux; \
+    git clone --depth 1 --single-branch "https://github.com/contactandyc/a-memory-library.git" "a-memory-library"; \
+    cd "a-memory-library"; \
+    ./build.sh clean && \
+    ./build.sh install; \
+    cd ..; \
+    rm -rf "a-memory-library"
+# --- Build & install the-lz4-library ---
+RUN set -eux; \
+    git clone --depth 1 --single-branch "https://github.com/contactandyc/the-lz4-library.git" "the-lz4-library"; \
+    cd "the-lz4-library"; \
+    ./build.sh clean && \
+    ./build.sh install; \
+    cd ..; \
+    rm -rf "the-lz4-library"
+# --- Build & install the-io-library ---
+RUN set -eux; \
+    git clone --depth 1 --single-branch "https://github.com/contactandyc/the-io-library.git" "the-io-library"; \
+    cd "the-io-library"; \
+    ./build.sh clean && \
+    ./build.sh install; \
+    cd ..; \
+    rm -rf "the-io-library"
 
 # --- Build & install this project --------------------------------------------
 COPY --chown=dev:dev . /workspace/restinio-c
