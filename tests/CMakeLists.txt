@@ -43,13 +43,9 @@ list(APPEND TEST_EXECUTABLES test_restinio)
 set_target_properties(test_restinio PROPERTIES
   C_STANDARD 23
   C_STANDARD_REQUIRED YES
+  CXX_STANDARD 17
+  CXX_STANDARD_REQUIRED YES
 )
-if("CXX" IN_LIST CMAKE_PROJECT_LANGUAGES)
-  set_target_properties(test_restinio PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED YES
-  )
-endif()
 
 target_link_libraries(test_restinio PRIVATE restinio::restinio)
 target_link_libraries(test_restinio PRIVATE fmt::fmt)
