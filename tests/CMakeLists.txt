@@ -9,6 +9,11 @@ cmake_minimum_required(VERSION 3.20)
 
 project(restinio_c_tests LANGUAGES C CXX)
 
+if(CMAKE_PREFIX_PATH)
+  include_directories("${CMAKE_PREFIX_PATH}/include")
+  link_directories("${CMAKE_PREFIX_PATH}/lib")
+endif()
+
 set(A_BUILD_VARIANT "debug" CACHE STRING
     "Variant to link via restinio_c::restinio_c (debug|memory|static|shared)")
 set_property(CACHE A_BUILD_VARIANT PROPERTY STRINGS debug memory static shared)
@@ -30,12 +35,18 @@ endif()
 set(TEST_EXECUTABLES "")
 
 # ---- Targets ----
+# ==============================================================================
+# test_restinio Target (Standard Test)
+# ==============================================================================
 add_executable(test_restinio
   src/test_restinio.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/handlers/restinio_path.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/restinio_c.cpp
 )
 
 target_include_directories(test_restinio PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/../src
+  ${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
 
 list(APPEND TEST_EXECUTABLES test_restinio)
