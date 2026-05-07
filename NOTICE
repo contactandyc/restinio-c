@@ -5,3 +5,23 @@ Restinio C Library
 Maintainer: Andy Curtis <contactandyc@gmail.com>
 
 Licensed under Apache-2.0 (see LICENSE)
+
+ASIO:
+This software uses Asio (https://github.com/chriskohlhoff/asio).
+Asio is licensed under the Boost Software License, Version 1.0.
+Copyright (c) 2003-2024 Christopher M. Kohlhoff.
+
+EXPECTED-LITE:
+This software uses expected-lite (https://github.com/martinmoene/expected-lite).
+expected-lite is licensed under the Boost Software License, Version 1.0.
+Copyright 2017-present Martin Moene.
+
+FMT:
+This software uses the fmt library (https://github.com/fmtlib/fmt).
+fmt is licensed under the MIT License.
+Copyright (c) 2012 - present, Victor Zverovich
+
+RESTINIO:
+This software uses RESTinio (https://github.com/Stiffstream/restinio).
+RESTinio is licensed under the BSD-3-Clause License.
+Copyright (c) 2017-2024 Stiffstream LLC.

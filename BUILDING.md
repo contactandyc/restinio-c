@@ -1,7 +1,7 @@
 # BUILDING
 
 This project: **Restinio C Library**
-Version: **0.1.4**
+Version: **0.1.5**
 
 ## Local build
 
@@ -48,9 +48,9 @@ Clone & build:
 git clone --depth 1 --branch asio-1-30-2 --single-branch "https://github.com/chriskohlhoff/asio.git" "asio"
 cd "asio"
 (cd asio && ./autogen.sh)
-(cd asio && ./configure --prefix=/usr/local)
+(cd asio && ./configure --prefix=${PREFIX:-/usr/local})
 (cd asio && make -j"$(nproc)")
-(cd asio && sudo make install)
+(cd asio && ${SUDO}make install)
 cd ..
 rm -rf "asio"
 ```
@@ -63,9 +63,9 @@ Clone & build:
 ```bash
 git clone --depth 1 --branch v.0.7.3-fork --single-branch "https://github.com/contactandyc/restinio.git" "expected-lite"
 cd "expected-lite"
-cmake -S expected-lite -B expected-lite/build -DCMAKE_INSTALL_PREFIX=/usr/local
+cmake -S expected-lite -B expected-lite/build -DCMAKE_INSTALL_PREFIX=${PREFIX:-/usr/local}
 cmake --build expected-lite/build -j"$(nproc)"
-sudo cmake --install expected-lite/build
+${SUDO}cmake --install expected-lite/build
 cd ..
 rm -rf "expected-lite"
 ```
@@ -78,9 +78,9 @@ Clone & build:
 ```bash
 git clone --depth 1 --branch v.0.7.3-fork --single-branch "https://github.com/contactandyc/restinio.git" "fmt"
 cd "fmt"
-cmake -S fmt -B fmt/build -DCMAKE_INSTALL_PREFIX=/usr/local
+cmake -S fmt -B fmt/build -DCMAKE_INSTALL_PREFIX=${PREFIX:-/usr/local}
 cmake --build fmt/build -j"$(nproc)"
-sudo cmake --install fmt/build
+${SUDO}cmake --install fmt/build
 cd ..
 rm -rf "fmt"
 ```
@@ -93,9 +93,9 @@ Clone & build:
 ```bash
 git clone --depth 1 --branch v.0.7.3-fork --single-branch "https://github.com/contactandyc/restinio.git" "restinio"
 cd "restinio"
-cmake -S dev -B dev/build -DCMAKE_INSTALL_PREFIX=/usr/local -DRESTINIO_SAMPLE=OFF -DRESTINIO_TEST=OFF -DRESTINIO_DEP_FMT=system -DRESTINIO_DEP_EXPECTED_LITE=system
+cmake -S dev -B dev/build -DCMAKE_INSTALL_PREFIX=${PREFIX:-/usr/local} -DRESTINIO_SAMPLE=OFF -DRESTINIO_TEST=OFF -DRESTINIO_DEP_FMT=system -DRESTINIO_DEP_EXPECTED_LITE=system
 cmake --build dev/build -j"$(nproc)"
-sudo cmake --install dev/build
+${SUDO}cmake --install dev/build
 cd ..
 rm -rf "restinio"
 ```
